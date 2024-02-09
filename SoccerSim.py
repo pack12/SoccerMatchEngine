@@ -1,6 +1,5 @@
-from game import Game
+from Game import Game
 from Player import Player
-
 def main():
     game = Game()
 
@@ -25,6 +24,9 @@ def main():
      Player("Phil", "Foden", False, 63, "Manchester City"),
      Player("Bernardo", "Silva", False,8, "Manchester City"),
     Player("Erling", "Haaland", False,39,"Manchester City")]
+
+
+
     game.game_players = game_players
     game.run()
 main()
