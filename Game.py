@@ -43,6 +43,7 @@ class Game:
             soccer_field = self.create_field()
             zoneData = ZoneData()
             zoneData.create_zone_board()
+            playerData.create_initial_player_rects(zoneData)
             while self.running:
                 
                 self.check_events(zoneData)

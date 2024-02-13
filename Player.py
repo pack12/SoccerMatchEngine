@@ -11,6 +11,9 @@ class Player:
 
     def move(self, FutureZone):
         self.currentZone = FutureZone
+    def __hash__(self):
+        return hash((self.fname, self.lname,self.hasBall,self.Index,self.Team))
+
 
 
 
@@ -41,12 +44,30 @@ class PlayerData:
     def __init__(self,playersInfo):
         self.game_players = [] #rects of players
         self.playersInfo = playersInfo #List of Player Objects
+        self.playerRects = {}
 
     """Draws player onto the self.win aka the main window"""
 
-    def draw_players(self,win, zoneData):
+    def draw_players(self,win):
         blue_tm, red_tm = create_players_sprites()
-        #Go through ALL player objects
+        for i in self.playerRects:
+            # print(f'{str(i.fname + " "+ i.lname)}: {self.playerRects[i]}')
+            # #OUTPUT = Erling Haaland:Rect(849,534,40,25)
+
+            if i.Team == "Manchester City":
+                win.blit(blue_tm,self.playerRects[i])
+
+            if i.Team == "Manchester United":
+                win.blit(red_tm,self.playerRects[i])
+
+
+
+
+
+
+
+    def create_initial_player_rects(self,zoneData):
+        blue_tm, red_tm = create_players_sprites()
         for i in range(len(self.playersInfo)):
             if self.playersInfo[i].Team == "Manchester City":
                 #Get the zone rect and the zone object
@@ -59,14 +80,8 @@ class PlayerData:
                 if self.playersInfo[i] not in zone_info.attached_players['Blue Team']:
 
                     zone_info.attached_players['Blue Team'].append(self.playersInfo[i])
-                if len(zone_info.attached_players['Blue Team']) > 1:
-                    pass
-
-                #Create the Rect and depending on condition, add it to list of rectangles
-                blue_rect = win.blit(blue_tm, center_zonexY)
-
-                if len(self.game_players) < 20:
-                    self.game_players.append(blue_rect)
+                player_rect = pygame.Rect(center_zonexY[0],center_zonexY[1],blue_tm.get_width(),blue_tm.get_height())
+                self.playerRects[self.playersInfo[i]] = player_rect
             if self.playersInfo[i].Team == "Manchester United":
                 zone_rect,zone_info = zoneData.get_zone(self.playersInfo[i].Index)
                 center_zonexY = (zone_rect.left + zone_rect.width / 2, zone_rect.top + zone_rect.height / 2)
@@ -75,17 +90,10 @@ class PlayerData:
                 if self.playersInfo[i] not in zone_info.attached_players['Red Team']:
 
                     zone_info.attached_players['Red Team'].append(self.playersInfo[i])
-                if len(zone_info.attached_players['Red Team']) > 1:
-                    #Find the player rect containing both of these
-                    for i in range(len(self.game_players)):
-                        pass
-                    pass
+                player_rect = pygame.Rect(center_zonexY[0], center_zonexY[1], blue_tm.get_width(), blue_tm.get_height())
+                self.playerRects[self.playersInfo[i]] = player_rect
 
 
-                red_rect = win.blit(red_tm, center_zonexY)
-                if len(self.game_players) < 20:
-
-                    self.game_players.append(red_rect)
 
 
 

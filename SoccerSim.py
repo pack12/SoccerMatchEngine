@@ -4,7 +4,7 @@ def main():
     game = Game()
 
     game_players = [Player("Luke","Shaw",False,2,"Manchester United"),
-    Player("Nemenja", "Matic", False,35,"Manchester United"),
+    Player("Nemenja", "Matic", False,24,"Manchester United"),
      Player("Lisandro", "Martinez", False,35,"Manchester United"),
      Player("Aaron", "Wan-Bissaka", False,57,"Manchester United"),
      Player("Casemiro","",False,15, "Manchester United"),
