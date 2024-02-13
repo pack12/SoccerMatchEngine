@@ -1,4 +1,5 @@
 import numpy as np
+import time
 import pygame
 class Player:
     def __init__(self,fname,lname,hasBall,currentZone,Team):
@@ -34,8 +35,64 @@ class Player:
     def check_dfp_arnd_target(self):
         pass
 
-    """Creating the Player Sprites"""
 
+
+class PlayerData:
+    def __init__(self,playersInfo):
+        self.game_players = [] #rects of players
+        self.playersInfo = playersInfo #List of Player Objects
+
+    """Draws player onto the self.win aka the main window"""
+
+    def draw_players(self,win, zoneData):
+        blue_tm, red_tm = create_players_sprites()
+        #Go through ALL player objects
+        for i in range(len(self.playersInfo)):
+            if self.playersInfo[i].Team == "Manchester City":
+                #Get the zone rect and the zone object
+                zone_rect,zone_info = zoneData.get_zone(self.playersInfo[i].Index)
+
+                #Use the zone rect to get the center of the zone!
+                center_zonexY = (zone_rect.left + zone_rect.width / 2, zone_rect.top + zone_rect.height / 2)
+
+                #Add player on the zone object, only if it's not already there!
+                if self.playersInfo[i] not in zone_info.attached_players['Blue Team']:
+
+                    zone_info.attached_players['Blue Team'].append(self.playersInfo[i])
+                if len(zone_info.attached_players['Blue Team']) > 1:
+                    pass
+
+                #Create the Rect and depending on condition, add it to list of rectangles
+                blue_rect = win.blit(blue_tm, center_zonexY)
+
+                if len(self.game_players) < 20:
+                    self.game_players.append(blue_rect)
+            if self.playersInfo[i].Team == "Manchester United":
+                zone_rect,zone_info = zoneData.get_zone(self.playersInfo[i].Index)
+                center_zonexY = (zone_rect.left + zone_rect.width / 2, zone_rect.top + zone_rect.height / 2)
+
+
+                if self.playersInfo[i] not in zone_info.attached_players['Red Team']:
+
+                    zone_info.attached_players['Red Team'].append(self.playersInfo[i])
+                if len(zone_info.attached_players['Red Team']) > 1:
+                    #Find the player rect containing both of these
+                    for i in range(len(self.game_players)):
+                        pass
+                    pass
+
+
+                red_rect = win.blit(red_tm, center_zonexY)
+                if len(self.game_players) < 20:
+
+                    self.game_players.append(red_rect)
+
+
+
+
+
+
+"""Creating the Player Sprites"""
 def create_players_sprites():
     blue_img = pygame.image.load("Images/blueTeam.png")
     blue_surf = pygame.transform.scale(blue_img, (40, 25))
@@ -47,18 +104,5 @@ def create_players_sprites():
 
 
 
-"""Draws player onto the self.win aka the main window"""
-def draw_players(game_players,win,zoneData):
-    blue_tm,red_tm = create_players_sprites()
-    for i in range(len(game_players)):
-        if game_players[i].Team == "Manchester City":
 
-            zone_rect = zoneData.get_zone(game_players[i].Index)
-            center_zone_rect = (zone_rect.left + zone_rect.width/2,zone_rect.top + zone_rect.height/2)
-
-            win.blit(blue_tm,center_zone_rect)
-        if game_players[i].Team == "Manchester United":
-            zone_rect = zoneData.get_zone(game_players[i].Index)
-            center_zone_rect = (zone_rect.left + zone_rect.width/2, zone_rect.top + zone_rect.height/2)
-            win.blit(red_tm, center_zone_rect)
 

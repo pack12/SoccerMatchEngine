@@ -1,10 +1,10 @@
 from Game import Game
-from Player import Player
+from Player import Player, PlayerData
 def main():
     game = Game()
 
     game_players = [Player("Luke","Shaw",False,2,"Manchester United"),
-    Player("Nemenja", "Matic", False,24,"Manchester United"),
+    Player("Nemenja", "Matic", False,35,"Manchester United"),
      Player("Lisandro", "Martinez", False,35,"Manchester United"),
      Player("Aaron", "Wan-Bissaka", False,57,"Manchester United"),
      Player("Casemiro","",False,15, "Manchester United"),
@@ -26,7 +26,7 @@ def main():
     Player("Erling", "Haaland", False,39,"Manchester City")]
 
 
+    playerData = PlayerData(game_players)
 
-    game.game_players = game_players
-    game.run()
+    game.run(playerData)
 main()

@@ -45,7 +45,16 @@ class ZoneData:
 
                 for j in range(len(self.zones)):
                     if j == i:
-                        return self.zones[j]
+                        return self.zones[j],self.zoneInfo[j]
+    def get_zoneInfo(self,index):
+        for i in range(len(self.zoneInfo)):
+            if self.zoneInfo[i].index == index:
+                return self.zoneinfo[i].index
+    def check_zone_for_multiple_players(self):
+        multiple_players = []
+        for i in range(len(self.zoneInfo)):
+            if self.zoneInfo[i].attached_players['Red Team'] or self.zoneInfo[i].attached_players['Blue Team'] > 1:
+                return self.zoneInfo[i].index
 
     """Draw zones onto self.win"""
 
@@ -62,6 +71,8 @@ class ZoneData:
         for i in range(len(self.zones)):
             if self.zones[i].collidepoint(mouse_x, mouse_y):
                 print(f'Index: {self.zoneInfo[i].index}')
+                print(f'{self.zoneInfo[i].attached_players}')
+
 
     # def update(self,game_players):
     #     for i in range(len(self.zoneInfo)):
