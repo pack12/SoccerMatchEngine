@@ -12,9 +12,9 @@ def main():
      Player("Alejandro", "Garnacho", False,60,"Manchester United"),
      Player("Bruno", "Fernandes",False,27,"Manchester United"), # Originally 27
      Player("Marcus","Rashford", False,5,"Manchester United"),
-     Player("Rasmus", "Hojlund",False,28,"Manchester United"),
+     Player("Rasmus", "Hojlund",True,28,"Manchester United"),
 
-    Player("Nathan", "Ake", True,65,"Manchester City"),
+    Player("Nathan", "Ake", False,65,"Manchester City"),
      Player("Josko", "Gvardiol",False,32,"Manchester City"), # Originally 32
      Player("Rueben", "Dias", False, 43, "Manchester City"), # Originally 43
      Player("Kyle", "Walker", False,10, "Manchester City"),

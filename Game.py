@@ -1,5 +1,6 @@
 import pygame
 
+from Ball import Ball
 from Zone import ZoneData
 
 class Game:
@@ -44,15 +45,7 @@ class Game:
             zoneData = ZoneData()
             zoneData.create_zone_board()
             playerData.create_initial_player_rects(zoneData)
-
-            # incrementor = 0
-            # for i in range(len(zoneData.zoneInfo)):
-            #     incrementor+=1
-            #     print(f'Index: {zoneData.zoneInfo[i].index}:{zoneData.zoneInfo[i].Locations}')
-            #     print(incrementor)
-            #     if incrementor == 66:
-            #         print(zoneData.zoneInfo[i].centerXY)
-
+            ball = Ball()
             while self.running:
                 
                 self.check_events(zoneData)
@@ -62,6 +55,7 @@ class Game:
                 if self.debug:
                     zoneData.draw_zones(self.win)
                 playerData.draw_players(self.win,zoneData)
+                ball.draw_ball(self.win,playerData)
                 pygame.display.flip() #Update Display
 
                 self.clock.tick(60)  # limits FPS to 60
