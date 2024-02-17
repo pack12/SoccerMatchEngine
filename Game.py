@@ -1,5 +1,5 @@
 import pygame
-from Player import draw_players
+
 from Zone import ZoneData
 
 class Game:
@@ -12,7 +12,6 @@ class Game:
             pygame.display.set_caption("Soccer Sim")
             self.clock = pygame.time.Clock()
             self.running = True
-            self.game_players = []
             self.debug = True
 
         """Soccer surf is created here"""
@@ -40,10 +39,20 @@ class Game:
 
 
 
-        def run(self):
+        def run(self,playerData):
             soccer_field = self.create_field()
             zoneData = ZoneData()
             zoneData.create_zone_board()
+            playerData.create_initial_player_rects(zoneData)
+
+            # incrementor = 0
+            # for i in range(len(zoneData.zoneInfo)):
+            #     incrementor+=1
+            #     print(f'Index: {zoneData.zoneInfo[i].index}:{zoneData.zoneInfo[i].Locations}')
+            #     print(incrementor)
+            #     if incrementor == 66:
+            #         print(zoneData.zoneInfo[i].centerXY)
+
             while self.running:
                 
                 self.check_events(zoneData)
@@ -52,7 +61,7 @@ class Game:
                 self.win.blit(soccer_field,(0,0))
                 if self.debug:
                     zoneData.draw_zones(self.win)
-                draw_players(self.game_players,self.win,zoneData)
+                playerData.draw_players(self.win,zoneData)
                 pygame.display.flip() #Update Display
 
                 self.clock.tick(60)  # limits FPS to 60

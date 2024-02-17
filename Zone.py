@@ -8,6 +8,14 @@ class Zone:
         self.attached_players = {"Red Team":[], "Blue Team":[]}
         self.location_name = ""
         self.index = 0
+        self.centerXY = (self.x + self.width / 2, self.y + self.height / 2)
+        self.Locations = {"loc_1": [None],
+                          "loc_2": [None],
+                          "loc_3": [None],
+                          "loc_4": [None],
+                          "loc_5": [None],
+                          "loc_6": [None]}
+
 class ZoneData:
     def __init__(self):
         self.zoneInfo = [] #List of Zone objects
@@ -30,6 +38,16 @@ class ZoneData:
                 newZone.x = zone.x
                 newZone.y = zone.y
                 newZone.index = (i + 1) + (j * 11)
+                newZone.centerXY = (newZone.x + newZone.width / 2, newZone.y + newZone.height / 2)
+
+                #Adjusting the loc_ dictionary for updated values
+                newZone.Locations['loc_1'].insert(0,(newZone.centerXY[0] - 215,newZone.centerXY[1]-50))
+                newZone.Locations['loc_2'].insert(0, (newZone.centerXY[0] - 215, newZone.centerXY[1] - 5))
+                newZone.Locations['loc_3'].insert(0, (newZone.centerXY[0] - 215, newZone.centerXY[1] + 40))
+                newZone.Locations['loc_4'].insert(0, (newZone.centerXY[0] - 110, newZone.centerXY[1] - 50))
+                newZone.Locations['loc_5'].insert(0, (newZone.centerXY[0] - 110, newZone.centerXY[1] - 5))
+                newZone.Locations['loc_6'].insert(0, (newZone.centerXY[0] - 110, newZone.centerXY[1] + 40))
+
                 self.zoneInfo.append(newZone)
 
             zone.y += zone.height
@@ -45,7 +63,16 @@ class ZoneData:
 
                 for j in range(len(self.zones)):
                     if j == i:
-                        return self.zones[j]
+                        return self.zones[j],self.zoneInfo[j]
+    def get_zoneInfo(self,index):
+        for i in range(len(self.zoneInfo)):
+            if self.zoneInfo[i].index == index:
+                return self.zoneinfo[i].index
+    def check_zone_for_multiple_players(self):
+        multiple_players = []
+        for i in range(len(self.zoneInfo)):
+            if self.zoneInfo[i].attached_players['Red Team'] or self.zoneInfo[i].attached_players['Blue Team'] > 1:
+                return self.zoneInfo[i].index
 
     """Draw zones onto self.win"""
 
@@ -62,6 +89,9 @@ class ZoneData:
         for i in range(len(self.zones)):
             if self.zones[i].collidepoint(mouse_x, mouse_y):
                 print(f'Index: {self.zoneInfo[i].index}')
+                print(f'{self.zoneInfo[i].attached_players}')
+                print(f'{self.zoneInfo[i].Locations}')
+
 
     # def update(self,game_players):
     #     for i in range(len(self.zoneInfo)):
