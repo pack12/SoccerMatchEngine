@@ -44,6 +44,14 @@ class Game:
             zoneData = ZoneData()
             zoneData.create_zone_board()
             playerData.create_initial_player_rects(zoneData)
+            # incrementor = 0
+            # for i in range(len(zoneData.zoneInfo)):
+            #     incrementor+=1
+            #     print(f'Index: {zoneData.zoneInfo[i].index}:{zoneData.zoneInfo[i].Locations}')
+            #     print(incrementor)
+            #     if incrementor == 66:
+            #         print(zoneData.zoneInfo[i].centerXY)
+
             while self.running:
                 
                 self.check_events(zoneData)

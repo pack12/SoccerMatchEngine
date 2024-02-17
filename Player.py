@@ -8,6 +8,7 @@ class Player:
         self.hasBall = hasBall
         self.Index = currentZone
         self.Team = Team
+        self.placedOnLocation = False
 
     def move(self, FutureZone):
         self.currentZone = FutureZone
@@ -48,8 +49,9 @@ class PlayerData:
 
     """Draws player onto the self.win aka the main window"""
 
-    def draw_players(self,win):
+    def draw_players(self,win,zoneData):
         blue_tm, red_tm = create_players_sprites()
+        self.adjust_player_rects(zoneData)
         for i in self.playerRects:
             # print(f'{str(i.fname + " "+ i.lname)}: {self.playerRects[i]}')
             # #OUTPUT = Erling Haaland:Rect(849,534,40,25)
@@ -63,9 +65,6 @@ class PlayerData:
 
 
 
-
-
-
     def create_initial_player_rects(self,zoneData):
         blue_tm, red_tm = create_players_sprites()
         for i in range(len(self.playersInfo)):
@@ -75,6 +74,8 @@ class PlayerData:
 
                 #Use the zone rect to get the center of the zone!
                 center_zonexY = (zone_rect.left + zone_rect.width / 2, zone_rect.top + zone_rect.height / 2)
+
+
 
                 #Add player on the zone object, only if it's not already there!
                 if self.playersInfo[i] not in zone_info.attached_players['Blue Team']:
@@ -93,6 +94,89 @@ class PlayerData:
                 player_rect = pygame.Rect(center_zonexY[0], center_zonexY[1], blue_tm.get_width(), blue_tm.get_height())
                 self.playerRects[self.playersInfo[i]] = player_rect
 
+    def adjust_player_rects(self,zoneData):
+        keys = self.playerRects.keys()
+
+        # print(keys)
+        key_list = list(keys)
+        # Get the zone rect and the zone object
+
+        for i in keys:
+            for j in self.playerRects:
+                if self.playerRects[i] == self.playerRects[j] and i.fname != j.fname and \
+                        i.Team == "Manchester United" and j.Team == "Manchester United":
+                    # print(f'PLayer: {i.fname} and {j.fname}')
+                    # print(self.playerRects[i] == self.playerRects[j])
+                    playerRect = self.playerRects[i]
+                    playerRectList = list(playerRect)
+                    playerRectList[0] -= 60
+                    playerRectList[1] -= 60
+                    playerRectTuple = tuple(playerRectList)
+                    self.playerRects[i] = pygame.Rect(playerRectTuple)
+
+                    playerRect = self.playerRects[j]
+                    playerRectList = list(playerRect)
+                    playerRectList[0] -= 60
+                    # playerRectList[1] -= 60
+                    playerRectTuple = tuple(playerRectList)
+                    self.playerRects[j] = pygame.Rect(playerRectTuple)
+                if self.playerRects[i] == self.playerRects[j] and i.fname != j.fname and \
+                        i.Team == "Manchester City" and j.Team == "Manchester City":
+                    playerRect = self.playerRects[i]
+                    playerRectList = list(playerRect)
+                    playerRectList[0] += 30
+                    playerRectList[1] -= 50
+                    playerRectTuple = tuple(playerRectList)
+                    self.playerRects[i] = pygame.Rect(playerRectTuple)
+
+                    playerRect = self.playerRects[j]
+                    playerRectList = list(playerRect)
+                    playerRectList[0] += 30
+                    # playerRectList[1] -= 60
+                    playerRectTuple = tuple(playerRectList)
+                    self.playerRects[j] = pygame.Rect(playerRectTuple)
+        for i in range(len(zoneData.zoneInfo)):
+            if len(zoneData.zoneInfo[i].attached_players['Red Team']) \
+                    + len(zoneData.zoneInfo[i].attached_players['Blue Team']) >= 2:
+
+                indexOfZone = zoneData.zoneInfo[i].index
+
+                playersInZone = []
+                for k in (self.playerRects):
+                    # Get players who are in the zone index
+
+                    if k.Index == indexOfZone:
+
+                        # print(k.fname, " ", k.lname)
+                        playersInZone.append(k)
+                        # print(playersInZone, len(playersInZone))
+                for j in range(len(playersInZone)):
+                    # Get the PLayer Rect
+                    playerRect = self.playerRects[playersInZone[j]]
+
+
+                    # Get the Zone Rect
+                    zone_rect, zone_info = zoneData.get_zone(playersInZone[j].Index)
+                    player = playersInZone[j]
+
+                    if player.Team == "Manchester City":
+
+                        #Find available location for player on blue team
+                        for k in ['loc_4','loc_5','loc_6']:
+
+                            # print(zone_info.Locations[k])
+                            if zone_info.Locations[k][1] == None and player.placedOnLocation == False:
+                                del zone_info.Locations[k][1]
+                                zone_info.Locations[k].append(playersInZone[j].fname)
+                                player.placedOnLocation = True
+                    if player.Team == "Manchester United":
+                        # Find available location for player on red team
+                        for k in ['loc_1','loc_2','loc_3']:
+                            if zone_info.Locations[k][1] == None and player.placedOnLocation == False:
+                                del zone_info.Locations[k][1]
+                                zone_info.Locations[k].append(playersInZone[j].fname)
+                                player.placedOnLocation = True
+
 
 
 
@@ -109,8 +193,4 @@ def create_players_sprites():
     red_surf = pygame.transform.scale(red_img, (40, 25))
     red_surf.set_colorkey("White")
     return blue_surf, red_surf
-
-
-
-
 

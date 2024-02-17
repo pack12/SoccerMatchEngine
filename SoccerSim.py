@@ -16,14 +16,14 @@ def main():
 
     Player("Nathan", "Ake", True,65,"Manchester City"),
      Player("Josko", "Gvardiol",False,43,"Manchester City"),
-     Player("Rueben", "Dias", False, 32, "Manchester City"),
+     Player("Rueben", "Dias", False, 43, "Manchester City"),
      Player("Kyle", "Walker", False,10, "Manchester City"),
      Player("Rodri", "", False, 42, "Manchester City"),
      Player("Kevin", "De Bruyne", False,30,"Manchester City"),
      Player("Julien", "Alvarez", False, 52, "Manchester City"),
      Player("Phil", "Foden", False, 63, "Manchester City"),
      Player("Bernardo", "Silva", False,8, "Manchester City"),
-    Player("Erling", "Haaland", False,39,"Manchester City")]
+    Player("Erling", "Haaland", False,28,"Manchester City")]
 
 
     playerData = PlayerData(game_players)
