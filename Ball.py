@@ -23,10 +23,12 @@ class Ball:
                 playerRect = playerData.playerRects[i]
                 self.x = playerRect[0] - 10
                 self.y = playerRect[1]
+                self.currentIndex = i.Index
             elif i.hasBall == True and i.Team == "Manchester United":
                 playerRect = playerData.playerRects[i]
                 self.x = playerRect[0] + 25
                 self.y = playerRect[1]
+                self.currentIndex = i.Index
 
         ball_rect = pygame.Rect(self.x,self.y, ball_surf.get_width(), ball_surf.get_height())
         win.blit(ball_surf, ball_rect)

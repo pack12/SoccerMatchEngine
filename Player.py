@@ -156,6 +156,10 @@ class PlayerData:
                                 playerRectTuple = tuple(playerRectList)
                                 self.playerRects[player] = pygame.Rect(playerRectTuple)
 
+    def get_player_with_ball(self):
+        for i in self.playerRects:
+            if i.hasBall:
+                return i
 
 
 """Creating the Player Sprites"""
