@@ -44,6 +44,7 @@ class Game:
             zoneData = ZoneData()
             zoneData.create_zone_board()
             playerData.create_initial_player_rects(zoneData)
+
             # incrementor = 0
             # for i in range(len(zoneData.zoneInfo)):
             #     incrementor+=1

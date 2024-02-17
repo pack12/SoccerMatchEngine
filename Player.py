@@ -8,7 +8,7 @@ class Player:
         self.hasBall = hasBall
         self.Index = currentZone
         self.Team = Team
-        self.placedOnLocation = False
+        self.placedOnLocation = False # Used when adjusting the player rect
 
     def move(self, FutureZone):
         self.currentZone = FutureZone
@@ -95,46 +95,7 @@ class PlayerData:
                 self.playerRects[self.playersInfo[i]] = player_rect
 
     def adjust_player_rects(self,zoneData):
-        keys = self.playerRects.keys()
 
-        # print(keys)
-        key_list = list(keys)
-        # Get the zone rect and the zone object
-
-        for i in keys:
-            for j in self.playerRects:
-                if self.playerRects[i] == self.playerRects[j] and i.fname != j.fname and \
-                        i.Team == "Manchester United" and j.Team == "Manchester United":
-                    # print(f'PLayer: {i.fname} and {j.fname}')
-                    # print(self.playerRects[i] == self.playerRects[j])
-                    playerRect = self.playerRects[i]
-                    playerRectList = list(playerRect)
-                    playerRectList[0] -= 60
-                    playerRectList[1] -= 60
-                    playerRectTuple = tuple(playerRectList)
-                    self.playerRects[i] = pygame.Rect(playerRectTuple)
-
-                    playerRect = self.playerRects[j]
-                    playerRectList = list(playerRect)
-                    playerRectList[0] -= 60
-                    # playerRectList[1] -= 60
-                    playerRectTuple = tuple(playerRectList)
-                    self.playerRects[j] = pygame.Rect(playerRectTuple)
-                if self.playerRects[i] == self.playerRects[j] and i.fname != j.fname and \
-                        i.Team == "Manchester City" and j.Team == "Manchester City":
-                    playerRect = self.playerRects[i]
-                    playerRectList = list(playerRect)
-                    playerRectList[0] += 30
-                    playerRectList[1] -= 50
-                    playerRectTuple = tuple(playerRectList)
-                    self.playerRects[i] = pygame.Rect(playerRectTuple)
-
-                    playerRect = self.playerRects[j]
-                    playerRectList = list(playerRect)
-                    playerRectList[0] += 30
-                    # playerRectList[1] -= 60
-                    playerRectTuple = tuple(playerRectList)
-                    self.playerRects[j] = pygame.Rect(playerRectTuple)
         for i in range(len(zoneData.zoneInfo)):
             if len(zoneData.zoneInfo[i].attached_players['Red Team']) \
                     + len(zoneData.zoneInfo[i].attached_players['Blue Team']) >= 2:
@@ -142,18 +103,17 @@ class PlayerData:
                 indexOfZone = zoneData.zoneInfo[i].index
 
                 playersInZone = []
+
                 for k in (self.playerRects):
+
                     # Get players who are in the zone index
 
                     if k.Index == indexOfZone:
 
-                        # print(k.fname, " ", k.lname)
-                        playersInZone.append(k)
-                        # print(playersInZone, len(playersInZone))
-                for j in range(len(playersInZone)):
-                    # Get the PLayer Rect
-                    playerRect = self.playerRects[playersInZone[j]]
 
+                        playersInZone.append(k)
+
+                for j in range(len(playersInZone)):
 
                     # Get the Zone Rect
                     zone_rect, zone_info = zoneData.get_zone(playersInZone[j].Index)
@@ -167,20 +127,34 @@ class PlayerData:
                             # print(zone_info.Locations[k])
                             if zone_info.Locations[k][1] == None and player.placedOnLocation == False:
                                 del zone_info.Locations[k][1]
-                                zone_info.Locations[k].append(playersInZone[j].fname)
+                                zone_info.Locations[k].append(playersInZone[j])
                                 player.placedOnLocation = True
+
+                                #I need to pull out the tuple coordinates
+                                newX = zone_info.Locations[k][0][0]
+                                newY = zone_info.Locations[k][0][1]
+                                playerRect = self.playerRects[player]
+                                playerRectList = list(playerRect)
+                                playerRectList[0] = newX
+                                playerRectList[1] = newY
+                                playerRectTuple = tuple(playerRectList)
+                                self.playerRects[player] = pygame.Rect(playerRectTuple)
                     if player.Team == "Manchester United":
                         # Find available location for player on red team
                         for k in ['loc_1','loc_2','loc_3']:
                             if zone_info.Locations[k][1] == None and player.placedOnLocation == False:
                                 del zone_info.Locations[k][1]
-                                zone_info.Locations[k].append(playersInZone[j].fname)
+                                zone_info.Locations[k].append(playersInZone[j])
                                 player.placedOnLocation = True
-
-
-
-
-
+                                # I need to pull out the tuple coordinates
+                                newX = zone_info.Locations[k][0][0]
+                                newY = zone_info.Locations[k][0][1]
+                                playerRect = self.playerRects[player]
+                                playerRectList = list(playerRect)
+                                playerRectList[0] = newX
+                                playerRectList[1] = newY
+                                playerRectTuple = tuple(playerRectList)
+                                self.playerRects[player] = pygame.Rect(playerRectTuple)
 
 
 

@@ -16,12 +16,6 @@ class Zone:
                           "loc_5": [None],
                           "loc_6": [None]}
 
-        # self.Locations = {"loc_1":[(self.centerXY[0] - 60, self.centerXY[1] - 60),None],
-        #                   "loc_2": [(self.centerXY[0] -60,self.centerXY[1]),None],
-        #                   "loc_3": [(self.centerXY[0] - 60, self.centerXY[1] + 60),None],
-        #                   "loc_4": [(self.centerXY[0] + 30, self.centerXY[1] - 50), None],
-        #                   "loc_5": [(self.centerXY[0] + 30, self.centerXY[1]),None],
-        #                   "loc_6": [(self.centerXY[0] + 30, self.centerXY[1] + 50), None]}
 class ZoneData:
     def __init__(self):
         self.zoneInfo = [] #List of Zone objects
@@ -47,11 +41,11 @@ class ZoneData:
                 newZone.centerXY = (newZone.x + newZone.width / 2, newZone.y + newZone.height / 2)
 
                 #Adjusting the loc_ dictionary for updated values
-                newZone.Locations['loc_1'].insert(0,(newZone.centerXY[0] -160,newZone.centerXY[1]-60))
-                newZone.Locations['loc_2'].insert(0, (newZone.centerXY[0] - 160, newZone.centerXY[1]))
-                newZone.Locations['loc_3'].insert(0, (newZone.centerXY[0] - 160, newZone.centerXY[1] + 60))
+                newZone.Locations['loc_1'].insert(0,(newZone.centerXY[0] - 215,newZone.centerXY[1]-50))
+                newZone.Locations['loc_2'].insert(0, (newZone.centerXY[0] - 215, newZone.centerXY[1] - 5))
+                newZone.Locations['loc_3'].insert(0, (newZone.centerXY[0] - 215, newZone.centerXY[1] + 40))
                 newZone.Locations['loc_4'].insert(0, (newZone.centerXY[0] - 110, newZone.centerXY[1] - 50))
-                newZone.Locations['loc_5'].insert(0, (newZone.centerXY[0] - 110, newZone.centerXY[1]))
+                newZone.Locations['loc_5'].insert(0, (newZone.centerXY[0] - 110, newZone.centerXY[1] - 5))
                 newZone.Locations['loc_6'].insert(0, (newZone.centerXY[0] - 110, newZone.centerXY[1] + 40))
 
                 self.zoneInfo.append(newZone)
@@ -96,10 +90,6 @@ class ZoneData:
             if self.zones[i].collidepoint(mouse_x, mouse_y):
                 print(f'Index: {self.zoneInfo[i].index}')
                 print(f'{self.zoneInfo[i].attached_players}')
-                for value in self.zoneInfo[i].Locations.values():
-                    print(value)
-                    if 'Josko' in value:
-                        print("wtf")
                 print(f'{self.zoneInfo[i].Locations}')
 
 
