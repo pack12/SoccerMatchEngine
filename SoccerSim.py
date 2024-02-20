@@ -14,8 +14,8 @@ def main():
      Player("Marcus","Rashford", False,5,"Manchester United"),
      Player("Rasmus", "Hojlund",True,28,"Manchester United"),
 
-    Player("Nathan", "Ake", False,65,"Manchester City"),
-     Player("Josko", "Gvardiol",False,32,"Manchester City"), # Originally 32
+    Player("Nathan", "Ake", False,43,"Manchester City"),
+     Player("Josko", "Gvardiol",False,43,"Manchester City"), # Originally 32
      Player("Rueben", "Dias", False, 43, "Manchester City"), # Originally 43
      Player("Kyle", "Walker", False,10, "Manchester City"),
      Player("Rodri", "", False, 42, "Manchester City"),
