@@ -126,7 +126,6 @@ class PlayerData:
                     #Find available location for player on blue team
                     for k in ['loc_4','loc_5','loc_6']:
 
-                        # print(zone_info.Locations[k])
                         if zone_info.Locations[k][1] == None and player.placedOnLocation == False:
                             del zone_info.Locations[k][1]
                             zone_info.Locations[k].append(playersInZone[j])
@@ -177,7 +176,7 @@ class PlayerData:
             #Remove the player from the zone locations
             for i in zone.Locations:
                 if zone.Locations[i][1] == player:
-                    # print(f'{player.fname} here in {zone.index}')
+
                     zone.Locations[i].remove(player)
                     zone.Locations[i].append(None)
                     zone.attached_players[player.Team].remove(player)
@@ -193,10 +192,9 @@ class PlayerData:
             player.placedOnLocation = False
 
             futureZone.attached_players[player.Team].append(player)
+
     def dribble_player_left(self,zoneData):
         player = self.get_player_with_ball()
-        # Move the player over 1 zone to right
-
         zone = zoneData.zoneInfo[player.Index - 1]
         futureZone = zoneData.zoneInfo[player.Index-2]
 
@@ -204,7 +202,7 @@ class PlayerData:
 
             for i in zone.Locations:
                 if zone.Locations[i][1] == player:
-                    # print(f'{player.fname} here in {zone.index}')
+
                     zone.Locations[i].remove(player)
                     zone.Locations[i].append(None)
                     zone.attached_players[player.Team].remove(player)
@@ -216,18 +214,30 @@ class PlayerData:
             player.placedOnLocation = False
 
             futureZone.attached_players[player.Team].append(player)
+
     def player_pass_randomly(self):
+        #Initialize variable
         player_has_ball = None
+
+        #See what player has the ball
         for i in self.playersInfo:
             if i.hasBall:
                 player_has_ball = i
+
+        #For time being, we pick a random number for a random player
         random_n = random.randint(0, len(self.playerRects) - 1)
+
+        #Get Random player from player object list
         player_recieve_ball = self.playersInfo[random_n]
-        while player_recieve_ball.Team == "Manchester City" or player_recieve_ball.hasBall == True:
+
+        #Iterate until we get a reciever who is on the same team and isn't the player
+        while player_recieve_ball.Team != player_has_ball.Team or player_recieve_ball.hasBall == True:
             random_n = random.randint(0, len(self.playerRects) - 1)
             player_recieve_ball = self.playersInfo[random_n]
+
         print(f'{player_has_ball.fname} passes to {player_recieve_ball.fname}')
 
+        # Standard delete player and reinsert it into self.playerRect
         player_rect_from_dict = self.playerRects[player_has_ball]
         del self.playerRects[player_has_ball]
         player_has_ball.hasBall = False

@@ -88,8 +88,7 @@ class ZoneData:
         print(f'Mousex: {mouse_x} and Mousey: {mouse_y}')
         for i in range(len(self.zones)):
             if self.zones[i].collidepoint(mouse_x, mouse_y):
-                print(f'Index: {self.zoneInfo[i].index}')
-                print(f'{self.zoneInfo[i].attached_players}')
+                print(f'Index: {self.zoneInfo[i].index} *** Attached Players: {self.zoneInfo[i].attached_players}')
                 print(f'{self.zoneInfo[i].Locations}')
 
 
