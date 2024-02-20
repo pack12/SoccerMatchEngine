@@ -5,7 +5,7 @@ class Zone:
         self.height = 147
         self.x = 0
         self.y = 20
-        self.attached_players = {"Red Team":[], "Blue Team":[]}
+        self.attached_players = {"Manchester United":[], "Manchester City":[]}
         self.location_name = ""
         self.index = 0
         self.centerXY = (self.x + self.width / 2, self.y + self.height / 2)
@@ -71,7 +71,7 @@ class ZoneData:
     def check_zone_for_multiple_players(self):
         multiple_players = []
         for i in range(len(self.zoneInfo)):
-            if self.zoneInfo[i].attached_players['Red Team'] or self.zoneInfo[i].attached_players['Blue Team'] > 1:
+            if self.zoneInfo[i].attached_players['Manchester United'] or self.zoneInfo[i].attached_players['Manchester City'] > 1:
                 return self.zoneInfo[i].index
 
     """Draw zones onto self.win"""

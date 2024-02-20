@@ -1,5 +1,5 @@
 import pygame
-
+import random
 from Ball import Ball
 from Zone import ZoneData
 
@@ -25,7 +25,7 @@ class Game:
 
             return self.soccer_surf
 
-        def check_events(self,zoneData):
+        def check_events(self,zoneData,playerData):
                 
             for event in pygame.event.get():
                     if event.type == pygame.KEYDOWN:
@@ -33,6 +33,23 @@ class Game:
                             self.running = False
                         elif event.key == pygame.K_d:
                             self.debug = not self.debug
+                        elif event.key == pygame.K_SPACE:
+
+                            playerData.dribble_player_right(zoneData)
+
+                        elif event.key == pygame.K_LEFT:
+                            playerData.dribble_player_left(zoneData)
+                        elif event.key == pygame.K_p:
+                            playerData.player_pass_randomly()
+
+
+
+
+
+
+
+
+
                     if event.type == pygame.MOUSEBUTTONDOWN:
                            zoneData.check_mouse_in_zone()
                     elif event.type == pygame.QUIT:
@@ -45,10 +62,11 @@ class Game:
             zoneData = ZoneData()
             zoneData.create_zone_board()
             playerData.create_initial_player_rects(zoneData)
+            print(playerData.playerRects)
             ball = Ball()
             while self.running:
                 
-                self.check_events(zoneData)
+                self.check_events(zoneData,playerData)
 
                 # RENDER YOUR GAME HERE
                 self.win.blit(soccer_field,(0,0))
