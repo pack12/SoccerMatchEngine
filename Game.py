@@ -41,6 +41,10 @@ class Game:
                             playerData.dribble_player_left(zoneData)
                         elif event.key == pygame.K_p:
                             playerData.player_pass_randomly()
+                        elif event.key == pygame.K_UP:
+                            playerData.dribble_player_up(zoneData)
+                        elif event.key == pygame.K_DOWN:
+                            playerData.dribble_player_down(zoneData)
                     if event.type == pygame.MOUSEBUTTONDOWN:
                            zoneData.check_mouse_in_zone()
                     elif event.type == pygame.QUIT:

@@ -6,6 +6,7 @@ class Player:
     def __init__(self,fname,lname,hasBall,currentZone,Team):
         self.fname = fname
         self.lname = lname
+        self.fullName = str(f'{self.fname} {self.lname}')
         self.hasBall = hasBall
         self.Index = currentZone
         self.Team = Team
@@ -16,29 +17,6 @@ class Player:
     def __hash__(self):
         return hash((self.fname, self.lname,self.hasBall,self.Index,self.Team))
 
-
-
-
-    def get_pass_success(self, passing, target_zone):
-        
-        zones_away = self.get_zones_away(target_zone)
-        dfp_arnd = self.check_dfp_arnd_target()
-        dfp_in = self.check_dfp_in_target()
-
-        if dfp_arnd == False:
-                
-            denominator = 1 + np.exp((-0.25 * passing) + (0.25 * zones_away) + (0.6 * dfp_in))
-        else:
-            ant_attr = "1." + str()
-            
-            denominator = 1 + np.exp(((-0.25 * passing) + (0.25 * zones_away) + (0.6 * dfp_in))/float(ant_attr))
-        return 1/(denominator)
-
-    def get_zones_away(self,target_zone):
-        pass
-
-    def check_dfp_arnd_target(self):
-        pass
 
 
 
@@ -210,6 +188,57 @@ class PlayerData:
             player_rect_from_dict = self.playerRects[player]
             del self.playerRects[player]
             player.Index -= 1
+            self.playerRects[player] = player_rect_from_dict
+            player.placedOnLocation = False
+
+            futureZone.attached_players[player.Team].append(player)
+
+    def dribble_player_up(self,zoneData):
+        player = self.get_player_with_ball()
+        zone = zoneData.zoneInfo[player.Index - 1]
+
+        futureZoneIndex = zone.index - 11
+
+        futureZone = zoneData.zoneInfo[futureZoneIndex - 1]
+
+
+        if len(futureZone.attached_players[player.Team]) < 3:
+
+            for i in zone.Locations:
+                if zone.Locations[i][1] == player:
+
+                    zone.Locations[i].remove(player)
+                    zone.Locations[i].append(None)
+                    zone.attached_players[player.Team].remove(player)
+
+            player_rect_from_dict = self.playerRects[player]
+            del self.playerRects[player]
+            player.Index -= 11
+            self.playerRects[player] = player_rect_from_dict
+            player.placedOnLocation = False
+
+            futureZone.attached_players[player.Team].append(player)
+    def dribble_player_down(self,zoneData):
+        player = self.get_player_with_ball()
+        zone = zoneData.zoneInfo[player.Index - 1]
+
+        futureZoneIndex = zone.index + 11
+
+        futureZone = zoneData.zoneInfo[futureZoneIndex - 1]
+
+
+        if len(futureZone.attached_players[player.Team]) < 3:
+
+            for i in zone.Locations:
+                if zone.Locations[i][1] == player:
+
+                    zone.Locations[i].remove(player)
+                    zone.Locations[i].append(None)
+                    zone.attached_players[player.Team].remove(player)
+
+            player_rect_from_dict = self.playerRects[player]
+            del self.playerRects[player]
+            player.Index += 11
             self.playerRects[player] = player_rect_from_dict
             player.placedOnLocation = False
 
