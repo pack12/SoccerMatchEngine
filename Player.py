@@ -6,6 +6,7 @@ class Player:
     def __init__(self,fname,lname,hasBall,currentZone,Team):
         self.fname = fname
         self.lname = lname
+        self.fullName = str(f'{self.fname} {self.lname}')
         self.hasBall = hasBall
         self.Index = currentZone
         self.Team = Team
@@ -16,29 +17,6 @@ class Player:
     def __hash__(self):
         return hash((self.fname, self.lname,self.hasBall,self.Index,self.Team))
 
-
-
-
-    def get_pass_success(self, passing, target_zone):
-        
-        zones_away = self.get_zones_away(target_zone)
-        dfp_arnd = self.check_dfp_arnd_target()
-        dfp_in = self.check_dfp_in_target()
-
-        if dfp_arnd == False:
-                
-            denominator = 1 + np.exp((-0.25 * passing) + (0.25 * zones_away) + (0.6 * dfp_in))
-        else:
-            ant_attr = "1." + str()
-            
-            denominator = 1 + np.exp(((-0.25 * passing) + (0.25 * zones_away) + (0.6 * dfp_in))/float(ant_attr))
-        return 1/(denominator)
-
-    def get_zones_away(self,target_zone):
-        pass
-
-    def check_dfp_arnd_target(self):
-        pass
 
 
 
@@ -162,58 +140,124 @@ class PlayerData:
         for i in self.playerRects:
             if i.hasBall:
                 return i
-    def dribble_player_right(self,zoneData):
+    def move_player_right(self, zoneData):
         #Get the player with the ball b/c he will be the player deciding the first move and then everybody reacts
         player = self.get_player_with_ball()
 
         # Get the zone object the player is on
         zone = zoneData.zoneInfo[player.Index - 1]
-        futureZone = zoneData.zoneInfo[player.Index]
+        futureZoneIndex = zone.index + 1
+        if futureZoneIndex <= 66:
 
-        if len(futureZone.attached_players[player.Team]) < 3:
+            futureZone = zoneData.zoneInfo[futureZoneIndex-1]
+            print(f'Future Index: {futureZone.index}')
+        print(f'Current Index: {player.Index}')
 
 
-            #Remove the player from the zone locations
-            for i in zone.Locations:
-                if zone.Locations[i][1] == player:
+        if futureZoneIndex < 67:
 
-                    zone.Locations[i].remove(player)
-                    zone.Locations[i].append(None)
-                    zone.attached_players[player.Team].remove(player)
+            if len(futureZone.attached_players[player.Team]) < 3:
 
-                                                                # This is all in effort to delete and replace the player object
-                                                                #For WHATEVER reason, you cannot simply keep the player object and modify it
-                                                                #OTHERWISE I GET a KEYERROR in the dict, so to keep things simple, I just delete
-                                                                #And replace the player object with a replicate
-            player_rect_from_dict = self.playerRects[player]
-            del self.playerRects[player]
-            player.Index += 1
-            self.playerRects[player] = player_rect_from_dict
-            player.placedOnLocation = False
 
-            futureZone.attached_players[player.Team].append(player)
+                #Remove the player from the zone locations
+                for i in zone.Locations:
+                    if zone.Locations[i][1] == player:
 
-    def dribble_player_left(self,zoneData):
+                        zone.Locations[i].remove(player)
+                        zone.Locations[i].append(None)
+                        zone.attached_players[player.Team].remove(player)
+
+                                                                    # This is all in effort to delete and replace the player object
+                                                                    #For WHATEVER reason, you cannot simply keep the player object and modify it
+                                                                    #OTHERWISE I GET a KEYERROR in the dict, so to keep things simple, I just delete
+                                                                    #And replace the player object with a replicate
+                player_rect_from_dict = self.playerRects[player]
+                del self.playerRects[player]
+                player.Index += 1
+                self.playerRects[player] = player_rect_from_dict
+                player.placedOnLocation = False
+
+                futureZone.attached_players[player.Team].append(player)
+
+    def move_player_left(self, zoneData):
         player = self.get_player_with_ball()
         zone = zoneData.zoneInfo[player.Index - 1]
         futureZone = zoneData.zoneInfo[player.Index-2]
+        futureZoneIndex = zone.index - 1
+        print(futureZoneIndex)
+        if futureZoneIndex > 0:
 
-        if len(futureZone.attached_players[player.Team]) < 3:
+            if len(futureZone.attached_players[player.Team]) < 3:
 
-            for i in zone.Locations:
-                if zone.Locations[i][1] == player:
+                for i in zone.Locations:
+                    if zone.Locations[i][1] == player:
 
-                    zone.Locations[i].remove(player)
-                    zone.Locations[i].append(None)
-                    zone.attached_players[player.Team].remove(player)
+                        zone.Locations[i].remove(player)
+                        zone.Locations[i].append(None)
+                        zone.attached_players[player.Team].remove(player)
 
-            player_rect_from_dict = self.playerRects[player]
-            del self.playerRects[player]
-            player.Index -= 1
-            self.playerRects[player] = player_rect_from_dict
-            player.placedOnLocation = False
+                player_rect_from_dict = self.playerRects[player]
+                del self.playerRects[player]
+                player.Index -= 1
+                self.playerRects[player] = player_rect_from_dict
+                player.placedOnLocation = False
 
-            futureZone.attached_players[player.Team].append(player)
+                futureZone.attached_players[player.Team].append(player)
+
+    def move_player_up(self, zoneData):
+        player = self.get_player_with_ball()
+        zone = zoneData.zoneInfo[player.Index - 1]
+
+        futureZoneIndex = zone.index - 11
+
+        if futureZoneIndex > 0:
+
+            futureZone = zoneData.zoneInfo[futureZoneIndex - 1]
+
+
+            if len(futureZone.attached_players[player.Team]) < 3:
+
+                for i in zone.Locations:
+                    if zone.Locations[i][1] == player:
+
+                        zone.Locations[i].remove(player)
+                        zone.Locations[i].append(None)
+                        zone.attached_players[player.Team].remove(player)
+
+                player_rect_from_dict = self.playerRects[player]
+                del self.playerRects[player]
+                player.Index -= 11
+                self.playerRects[player] = player_rect_from_dict
+                player.placedOnLocation = False
+
+                futureZone.attached_players[player.Team].append(player)
+    def move_player_down(self, zoneData):
+        player = self.get_player_with_ball()
+        zone = zoneData.zoneInfo[player.Index - 1]
+
+        futureZoneIndex = zone.index + 11
+
+        if futureZoneIndex < len(zoneData.zoneInfo):
+
+            futureZone = zoneData.zoneInfo[futureZoneIndex - 1]
+
+
+            if len(futureZone.attached_players[player.Team]) < 3:
+
+                for i in zone.Locations:
+                    if zone.Locations[i][1] == player:
+
+                        zone.Locations[i].remove(player)
+                        zone.Locations[i].append(None)
+                        zone.attached_players[player.Team].remove(player)
+
+                player_rect_from_dict = self.playerRects[player]
+                del self.playerRects[player]
+                player.Index += 11
+                self.playerRects[player] = player_rect_from_dict
+                player.placedOnLocation = False
+
+                futureZone.attached_players[player.Team].append(player)
 
     def player_pass_randomly(self):
         #Initialize variable
