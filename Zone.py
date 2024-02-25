@@ -15,6 +15,11 @@ class Zone:
                           "loc_4": [None],
                           "loc_5": [None],
                           "loc_6": [None]}
+        self.leftEdge = False
+        self.topEdge = False
+        self.rightEdge = False
+        self.bottomEdge = False
+
 
 class ZoneData:
     def __init__(self):
@@ -51,6 +56,15 @@ class ZoneData:
                 self.zoneInfo.append(newZone)
 
             zone.y += zone.height
+            # 0,10
+        for i in [0,1,2,3,4,5,6,7,8,9,10]:
+            self.zoneInfo[i].topEdge = True
+        for i in [0,11,22,33,44,55]:
+            self.zoneInfo[i].leftEdge = True
+        for i in [10,21,32,43,54,65]:
+            self.zoneInfo[i].rightEdge = True
+        for i in [55,56,57,58,59,60,61,62,63,64,65]:
+            self.zoneInfo[i].bottomEdge = True
 
 
     """Used to get the Zone Rect, based on the Index"""
@@ -90,6 +104,10 @@ class ZoneData:
             if self.zones[i].collidepoint(mouse_x, mouse_y):
                 print(f'Index: {self.zoneInfo[i].index} *** Attached Players: {self.zoneInfo[i].attached_players}')
                 print(f'{self.zoneInfo[i].Locations}')
+                print(f'Top Edge: {self.zoneInfo[i].topEdge}')
+                print(f'Left Edge: {self.zoneInfo[i].leftEdge}')
+                print(f'Bottom Edge: {self.zoneInfo[i].bottomEdge}')
+                print(f'Right Edge: {self.zoneInfo[i].rightEdge}')
 
 
     # def update(self,game_players):

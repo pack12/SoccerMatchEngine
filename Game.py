@@ -45,6 +45,14 @@ class Game:
                             playerData.move_player_up(zoneData)
                         elif event.key == pygame.K_DOWN:
                             playerData.move_player_down(zoneData)
+                        elif event.key == pygame.K_q:
+                            playerData.move_player_upLeft(zoneData)
+                        elif event.key == pygame.K_z:
+                            playerData.move_player_downLeft(zoneData)
+                        elif event.key == pygame.K_o:
+                            playerData.move_player_upRight(zoneData)
+                        elif event.key == pygame.K_m:
+                            playerData.move_player_downRight(zoneData)
                     if event.type == pygame.MOUSEBUTTONDOWN:
                            zoneData.check_mouse_in_zone()
                     elif event.type == pygame.QUIT:

@@ -237,7 +237,7 @@ class PlayerData:
 
         futureZoneIndex = zone.index + 11
 
-        if futureZoneIndex < len(zoneData.zoneInfo):
+        if futureZoneIndex < 67:
 
             futureZone = zoneData.zoneInfo[futureZoneIndex - 1]
 
@@ -254,6 +254,131 @@ class PlayerData:
                 player_rect_from_dict = self.playerRects[player]
                 del self.playerRects[player]
                 player.Index += 11
+                self.playerRects[player] = player_rect_from_dict
+                player.placedOnLocation = False
+
+                futureZone.attached_players[player.Team].append(player)
+    def move_player_upLeft(self,zoneData):
+        player = self.get_player_with_ball()
+
+
+        zone = zoneData.zoneInfo[player.Index - 1]
+        futureZoneIndex = zone.index - 12
+        futureZone = zoneData.zoneInfo[futureZoneIndex-1]
+
+        if futureZoneIndex > 0 and zone.leftEdge == False:
+            if len(futureZone.attached_players[player.Team]) < 3:
+
+
+                #Remove the player from the zone locations
+                for i in zone.Locations:
+                    if zone.Locations[i][1] == player:
+
+                        zone.Locations[i].remove(player)
+                        zone.Locations[i].append(None)
+                        zone.attached_players[player.Team].remove(player)
+
+                player_rect_from_dict = self.playerRects[player]
+                del self.playerRects[player]
+                player.Index -= 12
+                self.playerRects[player] = player_rect_from_dict
+                player.placedOnLocation = False
+
+                futureZone.attached_players[player.Team].append(player)
+
+    def move_player_downLeft(self,zoneData):
+        player = self.get_player_with_ball()
+
+
+        zone = zoneData.zoneInfo[player.Index - 1]
+        futureZoneIndex = zone.index + 10
+        if futureZoneIndex < 66:
+
+            futureZone = zoneData.zoneInfo[futureZoneIndex-1]
+            # print(f'Current: {zone.index}')
+            # print(f'Future: {futureZoneIndex}')
+        if futureZoneIndex < 67 and zone.leftEdge == False and zone.bottomEdge == False:
+            if len(futureZone.attached_players[player.Team]) < 3:
+
+
+                #Remove the player from the zone locations
+                for i in zone.Locations:
+                    if zone.Locations[i][1] == player:
+
+                        zone.Locations[i].remove(player)
+                        zone.Locations[i].append(None)
+                        zone.attached_players[player.Team].remove(player)
+
+                player_rect_from_dict = self.playerRects[player]
+                del self.playerRects[player]
+                player.Index += 10
+                self.playerRects[player] = player_rect_from_dict
+                player.placedOnLocation = False
+
+                futureZone.attached_players[player.Team].append(player)
+    def move_player_upRight(self,zoneData):
+        player = self.get_player_with_ball()
+
+
+        zone = zoneData.zoneInfo[player.Index - 1]
+        futureZoneIndex = zone.index - 10
+
+        if futureZoneIndex < 66 and futureZoneIndex > 0:
+
+            futureZone = zoneData.zoneInfo[futureZoneIndex-1]
+            # print(f'Current: {zone.index}')
+            # print(f'Future: {futureZoneIndex}')
+
+        #print(f'Future Zone: {futureZone.index}')
+        if (futureZoneIndex < 67 and futureZoneIndex > 0) and zone.rightEdge == False:
+            if len(futureZone.attached_players[player.Team]) < 3:
+
+
+                #Remove the player from the zone locations
+                for i in zone.Locations:
+                    if zone.Locations[i][1] == player:
+
+                        zone.Locations[i].remove(player)
+                        zone.Locations[i].append(None)
+                        zone.attached_players[player.Team].remove(player)
+
+                player_rect_from_dict = self.playerRects[player]
+                del self.playerRects[player]
+                player.Index -= 10
+                self.playerRects[player] = player_rect_from_dict
+                player.placedOnLocation = False
+
+                futureZone.attached_players[player.Team].append(player)
+
+    def move_player_downRight(self,zoneData):
+        player = self.get_player_with_ball()
+
+
+        zone = zoneData.zoneInfo[player.Index - 1]
+        futureZoneIndex = zone.index + 12
+
+        if futureZoneIndex < 66 and futureZoneIndex > 0:
+
+            futureZone = zoneData.zoneInfo[futureZoneIndex-1]
+            # print(f'Current: {zone.index}')
+            # print(f'Future: {futureZoneIndex}')
+
+        #print(f'Future Zone: {futureZone.index}')
+        if (futureZoneIndex < 67 and futureZoneIndex > 0) and zone.rightEdge == False:
+            if len(futureZone.attached_players[player.Team]) < 3:
+
+
+                #Remove the player from the zone locations
+                for i in zone.Locations:
+                    if zone.Locations[i][1] == player:
+
+                        zone.Locations[i].remove(player)
+                        zone.Locations[i].append(None)
+                        zone.attached_players[player.Team].remove(player)
+
+                player_rect_from_dict = self.playerRects[player]
+                del self.playerRects[player]
+                player.Index += 12
                 self.playerRects[player] = player_rect_from_dict
                 player.placedOnLocation = False
 
