@@ -3,7 +3,7 @@ import time
 import random
 import pygame
 class Player:
-    def __init__(self,fname,lname,hasBall,currentZone,Team):
+    def __init__(self,fname,lname,hasBall,currentZone,Team,**kwargs):
         self.fname = fname
         self.lname = lname
         self.fullName = str(f'{self.fname} {self.lname}')
@@ -11,7 +11,12 @@ class Player:
         self.Index = currentZone
         self.Team = Team
         self.placedOnLocation = False # Used when adjusting the player rect
-
+        self.passing = kwargs.get('passing', 10)
+        self.decision = kwargs.get('decision',10)
+        self.finishing = kwargs.get('finishing',10)
+        self.dribble = kwargs.get('dribbling',10)
+        self.kickOff = kwargs.get('kickOff',False)
+        self.position = kwargs.get('position',None)
     def move(self, FutureZone):
         self.currentZone = FutureZone
     def __hash__(self):
@@ -118,7 +123,7 @@ class PlayerData:
                             playerRectList[1] = newY
                             playerRectTuple = tuple(playerRectList)
                             self.playerRects[player] = pygame.Rect(playerRectTuple)
-                if player.Team == "Manchester United":
+                if player.Team == "Manchester United" and player.position != "gk":
                     # Find available location for player on red team
                     for k in ['loc_1','loc_2','loc_3']:
                         if zone_info.Locations[k][1] == None and player.placedOnLocation == False:
@@ -140,6 +145,11 @@ class PlayerData:
         for i in self.playerRects:
             if i.hasBall:
                 return i
+    def get_opposite_team(self):
+        if self.get_player_with_ball().Team == "Manchester City":
+            return "Manchester United"
+        elif self.get_player_with_ball().Team == "Manchester United":
+            return "Manchester City"
     def move_player_right(self, zoneData):
         #Get the player with the ball b/c he will be the player deciding the first move and then everybody reacts
         player = self.get_player_with_ball()
@@ -384,7 +394,7 @@ class PlayerData:
 
                 futureZone.attached_players[player.Team].append(player)
 
-    def player_pass_randomly(self):
+    def player_pass_randomly(self,zoneData):
         #Initialize variable
         player_has_ball = None
 
@@ -405,8 +415,12 @@ class PlayerData:
             player_recieve_ball = self.playersInfo[random_n]
 
         print(f'{player_has_ball.fname} passes to {player_recieve_ball.fname}')
-
+        self.findDistanceToTargetPlayer(zoneData, player_recieve_ball)
         # Standard delete player and reinsert it into self.playerRect
+        #I think the reason why this happens (and this is just for future reference is becasue
+        #When we update the player_rect object in this method, the object in the player_Rect list is different than
+        #The object here! Basically you can't have the same object have 2 different attribute properties?
+
         player_rect_from_dict = self.playerRects[player_has_ball]
         del self.playerRects[player_has_ball]
         player_has_ball.hasBall = False
@@ -417,6 +431,280 @@ class PlayerData:
         player_recieve_ball.hasBall = True
         self.playerRects[player_recieve_ball] = player_rect_from_dict
 
+    def calculatePlayerActions(self,zoneData):
+        """So in order to calculate the potential player actions, the player needs to fin"""
+        pass
+    def findDistanceToTargetPlayer(self,zoneData,targetPlayer):
+        """In order to find the distance to target player, I need to get the player with the ball and their
+        current zone And I need to get the targetPlayer and the zone they're on"""
+        playerWithBall = self.get_player_with_ball()
+        playerWithBallZone = zoneData.zoneInfo[playerWithBall.Index - 1]
+        playerWithBallX = None
+        playerWithBallY = None
+
+        targetPlayerZone = zoneData.zoneInfo[targetPlayer.Index - 1]
+        targetPlayerX = None
+        targetPlayerY = None
+
+        # print(f'Target Player: {targetPlayer.fullName}')
+        #Get the playerWithBall x and y location
+
+        for i in zoneData.zoneInfo:
+            # print(i.Locations)
+            for j in i.Locations:
+                # print(i.Locations[j])
+
+                if i.Locations[j][1] == playerWithBall:
+                    playerWithBallX = i.Locations[j][0][0]
+                    playerWithBallY = i.Locations[j][0][1]
+                elif i.Locations[j][1] == targetPlayer:
+                    targetPlayerX = i.Locations[j][0][0]
+                    targetPlayerY = i.Locations[j][0][1]
+        # Define the coordinates of two points
+        playerWithBallPoint = np.array([playerWithBallX, playerWithBallY])
+        targetPlayerPoint = np.array([targetPlayerX, targetPlayerY])
+
+        # Calculate the distance between the two points
+        distance = np.linalg.norm(targetPlayerPoint - playerWithBallPoint)
+
+        # print("Distance between the points:", distance/147)
+        return distance/147
+
+    def findDistanceToEmptyZone(self,zoneData,targetZone):
+        """In order to find the distance to target player, I need to get the player with the ball and their
+                current zone And I need to get the targetPlayer and the zone they're on"""
+        playerWithBall = self.get_player_with_ball()
+        playerWithBallZone = zoneData.zoneInfo[playerWithBall.Index - 1]
+        playerWithBallX = None
+        playerWithBallY = None
+
+        targetZoneX = None
+        targetZoneY = None
+
+        # Get the playerWithBall x and y location
+        for i in zoneData.zoneInfo:
+            # print(i.Locations)
+            for j in i.Locations:
+                # print(i.Locations[j])
+                if i.Locations[j][1] == playerWithBall:
+                    playerWithBallX = i.Locations[j][0][0]
+                    playerWithBallY = i.Locations[j][0][1]
+
+            if i.index == targetZone.index:
+                targetZoneX = i.Locations['loc_1'][0][0]
+                targetZoneY = i.Locations['loc_1'][0][1]
+
+        # Define the coordinates of two points
+        playerWithBallPoint = np.array([playerWithBallX, playerWithBallY])
+        targetZonePoint = np.array([targetZoneX, targetZoneY])
+
+        # Calculate the distance between the two points
+        distance = np.linalg.norm(targetZonePoint - playerWithBallPoint)
+
+        # print("Distance between the points:", distance / 147)
+        return distance / 147
+
+    def findPlayerPassRates(self,zoneData):
+        passRates = {}
+        oppositeTeam = self.get_opposite_team()
+
+        for i in self.playersInfo:
+            if i != self.get_player_with_ball() and i.Team == self.get_player_with_ball().Team:
+
+                distance = self.findDistanceToTargetPlayer(zoneData,i)
+
+                #Calculate the pass rates right here and now and store them in passRates, along with potential target player
+                passing = self.get_player_with_ball().passing
+                targetPlayerZone = zoneData.zoneInfo[i.Index - 1]
+
+                denominator = 1 + np.exp((-0.25 * passing) + (0.25 * distance)) + \
+                              (0.6 * len(targetPlayerZone.attached_players[oppositeTeam]))
+                # denominator = 1 + np.exp((-0.25 * 10) + (0.25 * 2.23))
+                # print(denominator)
+                rate = 1/denominator
+                passRates[i.fullName] = rate
+
+
+
+        # print(passRates)
+        return passRates
+
+    """This is for offensive players without ball"""
+    def findEmptyZonePassRates(self,zoneData):
+        zoneRates = {}
+        for i in zoneData.zoneInfo:
+            if len(i.attached_players["Manchester United"]) == 0 and len(i.attached_players["Manchester City"]) == 0:
+                # print(f'Zone {i.index} has no players')
+                zoneDistance = self.findDistanceToEmptyZone(zoneData, i)
+
+                passing = self.get_player_with_ball().passing
+
+                denominator = 1 + np.exp((-0.25 * passing) + (0.35 * zoneDistance))
+
+                # print(denominator)
+                rate = 1 / denominator
+                zoneRates[i] = rate
+        # print(zoneRates)
+        return zoneRates
+    def findDribbleRates(self,zoneData):
+        dribbleRates = {}
+        player = self.get_player_with_ball()
+        #In order to find the Dribble Rates, I need to get all the surrounding zones
+        currentZone = zoneData.zoneInfo[player.Index - 1]
+
+        zoneIndexes = []
+        availableZonesToDribble = []
+        nZoneIndex = player.Index - 11
+        zoneIndexes.append(nZoneIndex)
+        neZoneIndex = player.Index - 10
+        zoneIndexes.append(neZoneIndex)
+        nwZoneIndex = player.Index - 12
+        zoneIndexes.append(nwZoneIndex)
+        wZoneIndex = player.Index - 1
+        zoneIndexes.append(wZoneIndex)
+        eZoneIndex = player.Index + 1
+        zoneIndexes.append(eZoneIndex)
+        sZoneIndex = player.Index + 11
+        zoneIndexes.append(sZoneIndex)
+        swZoneIndex = player.Index + 10
+        zoneIndexes.append(swZoneIndex)
+        seZoneIndex = player.Index + 12
+        zoneIndexes.append(seZoneIndex)
+
+        for i in zoneIndexes:
+            # Get the Zone
+            if i > 0 and i < 67:
+
+                zone = zoneData.zoneInfo[i - 1]
+                availableZonesToDribble.append(zone)
+                if currentZone.rightEdge == True and zone.leftEdge == True:
+                    #Don't add this zone as an available zone
+                    availableZonesToDribble.remove(zone)
+                elif currentZone.leftEdge == True and zone.rightEdge == True:
+                    availableZonesToDribble.remove(zone)
+                elif len(zone.attached_players[self.get_player_with_ball().Team]) == 3:
+                    availableZonesToDribble.remove(zone)
+
+
+        # print('Available Zones to Dribble: ')
+        dribbling = self.get_player_with_ball().dribble
+        for i in availableZonesToDribble:
+            # print(i.index)
+            if len(currentZone.attached_players[self.get_opposite_team()]) > 0:
+                denominator = 1 + np.exp((-0.075 * dribbling))
+                dribbleRates[i] = 1/denominator
+            elif len(i.attached_players[self.get_opposite_team()]) > 0:
+                denominator = 1 + np.exp((-0.1 * dribbling))
+                dribbleRates[i] = 1/denominator
+            elif len(i.attached_players[self.get_opposite_team()]) == 0:
+                denominator = 1 + np.exp((-0.20 * dribbling))
+                dribbleRates[i] = 1 / denominator
+
+        # print(f'Dribbling Rates: ')
+        # for i in dribbleRates:
+        #     print(f'Zone: {i.index} Rate: {dribbleRates[i]}')
+        return dribbleRates
+    def findShotRate(self,zoneData):
+        """In order to find the shot rate, I need finishing attribute and length to goal"""
+
+        playerWithBall = self.get_player_with_ball()
+        playerWithBallZone = zoneData.zoneInfo[playerWithBall.Index - 1]
+        playerWithBallX = None
+        playerWithBallY = None
+        goalX = None
+        goalY = None
+        goalPoint = None
+        if playerWithBall.Team == "Manchester United":
+            goalX = 1656
+            goalY = 455
+            goalPoint = np.array([goalX,goalY])
+
+            for i in zoneData.zoneInfo:
+                # print(i.Locations)
+                for j in i.Locations:
+                    # print(i.Locations[j])
+                    if i.Locations[j][1] == playerWithBall:
+                        playerWithBallX = i.Locations[j][0][0]
+                        playerWithBallY = i.Locations[j][0][1]
+        elif playerWithBall.Team == "Manchester City":
+            goalX = 34
+            goalY = 459
+            goalPoint = np.array([goalX, goalY])
+
+            for i in zoneData.zoneInfo:
+                # print(i.Locations)
+                for j in i.Locations:
+                    # print(i.Locations[j])
+                    if i.Locations[j][1] == playerWithBall:
+                        playerWithBallX = i.Locations[j][0][0]
+                        playerWithBallY = i.Locations[j][0][1]
+        playerWithBallPoint = np.array([playerWithBallX,playerWithBallY])
+        distance = np.linalg.norm(goalPoint-playerWithBallPoint)
+        distance = distance/147
+
+        shot = 1/(1 + np.exp(-(-1 + (0.2 * playerWithBall.finishing) + (-0.45 * distance))))
+        print(f'Shot Success Rate: {shot}')
+        return shot
+
+    def make_decision(self,probabilities):
+        """
+        Make a decision based on probabilities.
+
+        Parameters:
+        - probabilities: A list of probabilities for each action.
+
+        Returns:
+        - The index of the chosen action.
+        """
+        rand_num = np.random.rand()
+        cumulative_prob = 0.0
+        player_has_ball = self.get_player_with_ball()
+        if player_has_ball.kickOff == True:
+            print(f'{player_has_ball.fullName} is kicking us off!')
+
+            player_rect_from_dict = self.playerRects[player_has_ball]
+            del self.playerRects[player_has_ball]
+            player_has_ball.kickOff = False
+            self.playerRects[player_has_ball] = player_rect_from_dict
+
+            print("we should be deciding to pass")
+            return 0
+
+        # print(f'random number for make decisioNN: {rand_num}')
+        # print(f'probbbabilietes{probabilities}')
+        for i, prob in enumerate(probabilities):
+            cumulative_prob += prob
+            # print(f'Cumulative: {cumulative_prob}')
+            if rand_num < cumulative_prob:
+                return i
+
+        # Fallback: Return the last index if no decision is made
+        return len(probabilities) - 1
+
+    def does_action_succeed(self,probability):
+        low = 0.0
+        high = 1.0
+        rand_num = np.random.uniform(low, high, 1)
+        # print(f'rand: {rand_num}')
+        if probability > rand_num[0]:
+            print("Action succeeds!")
+        else:
+            print("Action does not succeed")
+
+    def softmax(self,z):
+        """
+        Compute softmax values for each element of the input array.
+
+        Parameters:
+        z : numpy.ndarray
+            Input array of shape (n,) where n is the number of elements.
+
+        Returns:
+        numpy.ndarray
+            Array of softmax probabilities of the same shape as input array.
+        """
+        exp_z = np.exp(z)
+        return exp_z / np.sum(exp_z)
 
 
 """Creating the Player Sprites"""
