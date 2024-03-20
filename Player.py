@@ -123,7 +123,7 @@ class PlayerData:
                             playerRectList[1] = newY
                             playerRectTuple = tuple(playerRectList)
                             self.playerRects[player] = pygame.Rect(playerRectTuple)
-                if player.Team == "Manchester United" and player.position != "gk":
+                if player.Team == "Manchester United":
                     # Find available location for player on red team
                     for k in ['loc_1','loc_2','loc_3']:
                         if zone_info.Locations[k][1] == None and player.placedOnLocation == False:
@@ -554,42 +554,47 @@ class PlayerData:
 
         zoneIndexes = []
         availableZonesToDribble = []
-        nZoneIndex = player.Index - 11
-        zoneIndexes.append(nZoneIndex)
-        neZoneIndex = player.Index - 10
-        zoneIndexes.append(neZoneIndex)
-        nwZoneIndex = player.Index - 12
-        zoneIndexes.append(nwZoneIndex)
-        wZoneIndex = player.Index - 1
-        zoneIndexes.append(wZoneIndex)
-        eZoneIndex = player.Index + 1
-        zoneIndexes.append(eZoneIndex)
-        sZoneIndex = player.Index + 11
-        zoneIndexes.append(sZoneIndex)
-        swZoneIndex = player.Index + 10
-        zoneIndexes.append(swZoneIndex)
-        seZoneIndex = player.Index + 12
-        zoneIndexes.append(seZoneIndex)
 
-        for i in zoneIndexes:
-            # Get the Zone
-            if i > 0 and i < 67:
+        if currentZone.index != 67 and currentZone.index != 68:
 
-                zone = zoneData.zoneInfo[i - 1]
-                availableZonesToDribble.append(zone)
-                if currentZone.rightEdge == True and zone.leftEdge == True:
-                    #Don't add this zone as an available zone
-                    availableZonesToDribble.remove(zone)
-                elif currentZone.leftEdge == True and zone.rightEdge == True:
-                    availableZonesToDribble.remove(zone)
-                elif len(zone.attached_players[self.get_player_with_ball().Team]) == 3:
-                    availableZonesToDribble.remove(zone)
+            nZoneIndex = player.Index - 11
+            zoneIndexes.append(nZoneIndex)
+            neZoneIndex = player.Index - 10
+            zoneIndexes.append(neZoneIndex)
+            nwZoneIndex = player.Index - 12
+            zoneIndexes.append(nwZoneIndex)
+            wZoneIndex = player.Index - 1
+            zoneIndexes.append(wZoneIndex)
+            eZoneIndex = player.Index + 1
+            zoneIndexes.append(eZoneIndex)
+            sZoneIndex = player.Index + 11
+            zoneIndexes.append(sZoneIndex)
+            swZoneIndex = player.Index + 10
+            zoneIndexes.append(swZoneIndex)
+            seZoneIndex = player.Index + 12
+            zoneIndexes.append(seZoneIndex)
 
+            for i in zoneIndexes:
+                # Get the Zone
+                if i > 0 and i < 67:
 
-        # print('Available Zones to Dribble: ')
+                    zone = zoneData.zoneInfo[i - 1]
+                    availableZonesToDribble.append(zone)
+                    if currentZone.rightEdge == True and zone.leftEdge == True:
+                        #Don't add this zone as an available zone
+                        availableZonesToDribble.remove(zone)
+                    elif currentZone.leftEdge == True and zone.rightEdge == True:
+                        availableZonesToDribble.remove(zone)
+                    elif len(zone.attached_players[self.get_player_with_ball().Team]) == 3:
+                        availableZonesToDribble.remove(zone)
+
+        elif currentZone.index == 67:
+            availableZonesToDribble.append(zoneData.zoneInfo[22])
+            availableZonesToDribble.append(zoneData.zoneInfo[33])
+        print('Available Zones to Dribble: ')
         dribbling = self.get_player_with_ball().dribble
         for i in availableZonesToDribble:
-            # print(i.index)
+            print(i.index)
             if len(currentZone.attached_players[self.get_opposite_team()]) > 0:
                 denominator = 1 + np.exp((-0.075 * dribbling))
                 dribbleRates[i] = 1/denominator

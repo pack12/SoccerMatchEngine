@@ -3,7 +3,8 @@ from Player import Player, PlayerData
 def main():
     game = Game()
 
-    game_players = [Player("Luke","Shaw",False,2,"Manchester United"),
+    game_players = [Player("Andre", "Onana", False, 67, "Manchester United",dribbling=5)
+        ,Player("Luke","Shaw",False,2,"Manchester United"),
     Player("Nemenja", "Matic", False,24,"Manchester United"),
      Player("Lisandro", "Martinez", False,35,"Manchester United"),
      Player("Aaron", "Wan-Bissaka", False,57,"Manchester United"),

@@ -65,6 +65,25 @@ class ZoneData:
             self.zoneInfo[i].rightEdge = True
         for i in [55,56,57,58,59,60,61,62,63,64,65]:
             self.zoneInfo[i].bottomEdge = True
+        newZone = Zone()
+        newZone.x = 13
+        newZone.y = 412
+        newZone.index = self.zoneInfo[-1].index + 1
+        newZone.width = newZone.width / 2 - 30
+        newZone.height = newZone.height / 2 + 25
+        print(f'Newzone index: {newZone.index}')
+        newZone.centerXY = (newZone.x + newZone.width / 2, newZone.y + newZone.height / 2)
+        newZone.Locations['loc_1'].insert(0, (newZone.centerXY[0], newZone.centerXY[1]))
+        newZone.Locations['loc_2'].insert(0, (newZone.centerXY[0] - 215, newZone.centerXY[1] - 5))
+        newZone.Locations['loc_3'].insert(0, (newZone.centerXY[0] - 215, newZone.centerXY[1] + 40))
+        newZone.Locations['loc_4'].insert(0, (newZone.centerXY[0] - 110, newZone.centerXY[1] - 50))
+        newZone.Locations['loc_5'].insert(0, (newZone.centerXY[0] - 110, newZone.centerXY[1] - 5))
+        newZone.Locations['loc_6'].insert(0, (newZone.centerXY[0] - 110, newZone.centerXY[1] + 40))
+        self.zoneInfo.append(newZone)
+        self.zones.append(pygame.Rect(newZone.x, newZone.y, newZone.width, newZone.height))
+
+
+
 
 
     """Used to get the Zone Rect, based on the Index"""
