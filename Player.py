@@ -164,7 +164,7 @@ class PlayerData:
         print(f'Current Index: {player.Index}')
 
 
-        if futureZoneIndex < 67:
+        if futureZoneIndex < 67 and futureZone.leftEdge == False:
 
             if len(futureZone.attached_players[player.Team]) < 3:
 
@@ -195,7 +195,7 @@ class PlayerData:
         futureZone = zoneData.zoneInfo[player.Index-2]
         futureZoneIndex = zone.index - 1
         print(futureZoneIndex)
-        if futureZoneIndex > 0:
+        if futureZoneIndex > 0 and futureZone.rightEdge == False:
 
             if len(futureZone.attached_players[player.Team]) < 3:
 
@@ -642,7 +642,7 @@ class PlayerData:
         distance = np.linalg.norm(goalPoint-playerWithBallPoint)
         distance = distance/147
 
-        shot = 1/(1 + np.exp(-(-1 + (0.2 * playerWithBall.finishing) + (-0.45 * distance))))
+        shot = 1/(1 + np.exp(-(-1 + (0.2 * playerWithBall.finishing) + (-0.35 * distance))))
         print(f'Shot Success Rate: {shot}')
         return shot
 
