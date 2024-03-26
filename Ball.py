@@ -13,7 +13,7 @@ class Ball:
 
     def update_index(self,futureIndex):
         self.currentIndex = futureIndex
-    def draw_ball(self,win,playerData):
+    def draw_ball(self,win,playerData,zoneData):
         ball_surf = self.create_ball()
 
         for i in playerData.playerRects:
@@ -24,11 +24,19 @@ class Ball:
                 self.x = playerRect[0] - 10
                 self.y = playerRect[1]
                 self.currentIndex = i.Index
+                self.playerAttached = i
+
             elif i.hasBall == True and i.Team == "Manchester United":
                 playerRect = playerData.playerRects[i]
                 self.x = playerRect[0] + 25
                 self.y = playerRect[1]
                 self.currentIndex = i.Index
+                self.playerAttached = i
+                # print(f'Ball current index: {self.currentIndex}')
+        if self.playerAttached == None:
+            # print(f'Ball current index: {self.currentIndex}')
+            self.x = zoneData.zoneInfo[self.currentIndex-1].x - 80
+            self.y = zoneData.zoneInfo[self.currentIndex-1].y + 50
 
         ball_rect = pygame.Rect(self.x,self.y, ball_surf.get_width(), ball_surf.get_height())
         win.blit(ball_surf, ball_rect)
