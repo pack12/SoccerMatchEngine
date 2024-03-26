@@ -431,6 +431,90 @@ class PlayerData:
         player_recieve_ball.hasBall = True
         self.playerRects[player_recieve_ball] = player_rect_from_dict
 
+    def pass_to_target(self,targetPlayer):
+
+        player_has_ball = self.get_player_with_ball()
+
+
+        player_recieve_ball = targetPlayer
+
+
+        # Standard delete player and reinsert it into self.playerRect
+        # I think the reason why this happens (and this is just for future reference is becasue
+        # When we update the player_rect object in this method, the object in the player_Rect list is different than
+        # The object here! Basically you can't have the same object have 2 different attribute properties?
+
+        player_rect_from_dict = self.playerRects[player_has_ball]
+        del self.playerRects[player_has_ball]
+        player_has_ball.hasBall = False
+        self.playerRects[player_has_ball] = player_rect_from_dict
+
+        player_rect_from_dict = self.playerRects[player_recieve_ball]
+        del self.playerRects[player_recieve_ball]
+        player_recieve_ball.hasBall = True
+        self.playerRects[player_recieve_ball] = player_rect_from_dict
+    def fail_pass(self,zoneData,targetPlayer,ball):
+        targetPlayerZone = zoneData.zoneInfo[targetPlayer.Index - 1]
+        zoneIndexes = []
+        surroundingTargetZones = []
+
+        if targetPlayerZone.index != 67 and targetPlayerZone.index != 68:
+
+            nZoneIndex = targetPlayerZone.index - 11
+            zoneIndexes.append(nZoneIndex)
+            neZoneIndex = targetPlayerZone.index - 10
+            zoneIndexes.append(neZoneIndex)
+            nwZoneIndex = targetPlayerZone.index - 12
+            zoneIndexes.append(nwZoneIndex)
+            wZoneIndex = targetPlayerZone.index - 1
+            zoneIndexes.append(wZoneIndex)
+            eZoneIndex = targetPlayerZone.index + 1
+            zoneIndexes.append(eZoneIndex)
+            sZoneIndex = targetPlayerZone.index + 11
+            zoneIndexes.append(sZoneIndex)
+            swZoneIndex = targetPlayerZone.index + 10
+            zoneIndexes.append(swZoneIndex)
+            seZoneIndex = targetPlayerZone.index + 12
+            zoneIndexes.append(seZoneIndex)
+
+            for i in zoneIndexes:
+                # Get the Zone
+                if i > 0 and i < 67:
+
+                    zone = zoneData.zoneInfo[i - 1]
+                    surroundingTargetZones.append(zone)
+                    if targetPlayerZone.rightEdge == True and zone.leftEdge == True:
+                        # Don't add this zone as an available zone
+                        surroundingTargetZones.remove(zone)
+                    elif targetPlayerZone.leftEdge == True and zone.rightEdge == True:
+                        surroundingTargetZones.remove(zone)
+                    elif len(zone.attached_players[self.get_player_with_ball().Team]) > 0:
+                        surroundingTargetZones.remove(zone)
+                        # print(f'This zone has a player on it{zone.index}')
+        elif targetPlayerZone.index == 67:
+            surroundingTargetZones.append(zoneData.zoneInfo[22])
+            surroundingTargetZones.append(zoneData.zoneInfo[33])
+        elif targetPlayerZone.index == 68:
+            surroundingTargetZones.append(zoneData.zoneInfo[32])
+            surroundingTargetZones.append(zoneData.zoneInfo[43])
+        print(f'PASS FAILED! Ball will go to one of these zones: {surroundingTargetZones}')
+        for i in surroundingTargetZones:
+            print(i.index)
+        rand_num = random.randint(0,len(surroundingTargetZones)-1)
+        chosenZone = surroundingTargetZones[rand_num]
+        print(f'Ball will go to {chosenZone.index}')
+
+        player_has_ball = self.get_player_with_ball()
+        player_rect_from_dict = self.playerRects[player_has_ball]
+        del self.playerRects[player_has_ball]
+        player_has_ball.hasBall = False
+        self.playerRects[player_has_ball] = player_rect_from_dict
+
+        ball.playerAttached = None
+        ball.currentIndex = chosenZone.index
+
+
+
     def calculatePlayerActions(self,zoneData):
         """So in order to calculate the potential player actions, the player needs to fin"""
         pass
@@ -448,11 +532,16 @@ class PlayerData:
 
         # print(f'Target Player: {targetPlayer.fullName}')
         #Get the playerWithBall x and y location
-
+        playerCounter = 0
         for i in zoneData.zoneInfo:
+
             # print(i.Locations)
             for j in i.Locations:
-                # print(i.Locations[j])
+                # print(f'{i.index}: {i.Locations[j]}')
+
+                if i.Locations[j][1] != None:
+                    # print(f'{i.Locations[j][1].fullName}')
+                    playerCounter += 1
 
                 if i.Locations[j][1] == playerWithBall:
                     playerWithBallX = i.Locations[j][0][0]
@@ -460,6 +549,7 @@ class PlayerData:
                 elif i.Locations[j][1] == targetPlayer:
                     targetPlayerX = i.Locations[j][0][0]
                     targetPlayerY = i.Locations[j][0][1]
+        # print(f'Player Counter: {playerCounter}')     #Had to write this print stmt in b/c player was being deleted!
         # Define the coordinates of two points
         playerWithBallPoint = np.array([playerWithBallX, playerWithBallY])
         targetPlayerPoint = np.array([targetPlayerX, targetPlayerY])
@@ -588,9 +678,18 @@ class PlayerData:
                     elif len(zone.attached_players[self.get_player_with_ball().Team]) == 3:
                         availableZonesToDribble.remove(zone)
 
+
         elif currentZone.index == 67:
             availableZonesToDribble.append(zoneData.zoneInfo[22])
             availableZonesToDribble.append(zoneData.zoneInfo[33])
+        elif currentZone.index == 68:
+            availableZonesToDribble.append(zoneData.zoneInfo[32])
+            availableZonesToDribble.append(zoneData.zoneInfo[43])
+
+        if currentZone.index == 23 or currentZone.index == 34:
+            availableZonesToDribble.append(zoneData.zoneInfo[66])
+        elif currentZone.index == 33 or currentZone.index == 44:
+            availableZonesToDribble.append(zoneData.zoneInfo[67])
         print('Available Zones to Dribble: ')
         dribbling = self.get_player_with_ball().dribble
         for i in availableZonesToDribble:
@@ -664,16 +763,6 @@ class PlayerData:
         rand_num = np.random.rand()
         cumulative_prob = 0.0
         player_has_ball = self.get_player_with_ball()
-        if player_has_ball.kickOff == True:
-            print(f'{player_has_ball.fullName} is kicking us off!')
-
-            player_rect_from_dict = self.playerRects[player_has_ball]
-            del self.playerRects[player_has_ball]
-            player_has_ball.kickOff = False
-            self.playerRects[player_has_ball] = player_rect_from_dict
-
-            print("we should be deciding to pass")
-            return 0
 
         # print(f'random number for make decisioNN: {rand_num}')
         # print(f'probbbabilietes{probabilities}')
@@ -693,8 +782,10 @@ class PlayerData:
         # print(f'rand: {rand_num}')
         if probability > rand_num[0]:
             print("Action succeeds!")
+            return True
         else:
             print("Action does not succeed")
+            return False
 
     def softmax(self,z):
         """

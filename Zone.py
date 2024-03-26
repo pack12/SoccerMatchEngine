@@ -71,12 +71,29 @@ class ZoneData:
         newZone.index = self.zoneInfo[-1].index + 1
         newZone.width = newZone.width / 2 - 30
         newZone.height = newZone.height / 2 + 25
-        print(f'Newzone index: {newZone.index}')
+
         newZone.centerXY = (newZone.x + newZone.width / 2, newZone.y + newZone.height / 2)
         newZone.Locations['loc_1'].insert(0, (newZone.centerXY[0], newZone.centerXY[1]))
         newZone.Locations['loc_2'].insert(0, (newZone.centerXY[0] - 215, newZone.centerXY[1] - 5))
         newZone.Locations['loc_3'].insert(0, (newZone.centerXY[0] - 215, newZone.centerXY[1] + 40))
         newZone.Locations['loc_4'].insert(0, (newZone.centerXY[0] - 110, newZone.centerXY[1] - 50))
+        newZone.Locations['loc_5'].insert(0, (newZone.centerXY[0] - 110, newZone.centerXY[1] - 5))
+        newZone.Locations['loc_6'].insert(0, (newZone.centerXY[0] - 110, newZone.centerXY[1] + 40))
+        self.zoneInfo.append(newZone)
+        self.zones.append(pygame.Rect(newZone.x, newZone.y, newZone.width, newZone.height))
+
+        newZone = Zone()
+        newZone.x = 1645
+        newZone.y = 412
+        newZone.index = self.zoneInfo[-1].index + 1
+        print(f'Newzone index: {newZone.index}')
+        newZone.width = newZone.width / 2 - 30
+        newZone.height = newZone.height / 2 + 25
+        newZone.centerXY = (newZone.x + newZone.width / 2, newZone.y + newZone.height / 2)
+        newZone.Locations['loc_1'].insert(0, (newZone.centerXY[0] - 215, newZone.centerXY[1] - 5))
+        newZone.Locations['loc_2'].insert(0, (newZone.centerXY[0] - 215, newZone.centerXY[1] - 5))
+        newZone.Locations['loc_3'].insert(0, (newZone.centerXY[0] - 215, newZone.centerXY[1] + 40))
+        newZone.Locations['loc_4'].insert(0, (newZone.centerXY[0] - 40, newZone.centerXY[1] - 20))
         newZone.Locations['loc_5'].insert(0, (newZone.centerXY[0] - 110, newZone.centerXY[1] - 5))
         newZone.Locations['loc_6'].insert(0, (newZone.centerXY[0] - 110, newZone.centerXY[1] + 40))
         self.zoneInfo.append(newZone)

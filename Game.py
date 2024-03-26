@@ -26,7 +26,7 @@ class Game:
 
             return self.soccer_surf
 
-        def check_events(self,zoneData,playerData):
+        def check_events(self,zoneData,playerData,ball):
                 
             for event in pygame.event.get():
                     if event.type == pygame.KEYDOWN:
@@ -103,19 +103,92 @@ class Game:
 
                             chosenFinalAction = playerData.make_decision(smFinalDecision.tolist())
                             print(f'Chosen Action: {chosenFinalAction}')
-                            if chosenFinalAction == 0:
+                            playerWithBall = playerData.get_player_with_ball()
+                            # print(f'Player with ball: {playerWithBall}')
+                            if chosenFinalAction == 0 and playerData.get_player_with_ball().kickOff == False:
                                 print(f'Chosen pass is to {pass_rate_keys_list[chosenPass]}: '
                                       f'{playerPassRates[pass_rate_keys_list[chosenPass]]}')
-                                playerData.does_action_succeed(f_pass_rate)
+                                doesPassSucceed = playerData.does_action_succeed(f_pass_rate)
 
-                            elif chosenFinalAction == 1:
+                                findTargetPlayer = pass_rate_keys_list[chosenPass]
+                                targetPlayer = None
+                                for i in playerData.playerRects:
+                                    if i.fullName == findTargetPlayer:
+                                        print(f'Found player! {i.fullName}')
+                                        targetPlayer = i
+                                print(f'Target Player: {findTargetPlayer}')
+
+                                if doesPassSucceed != True:
+                                    playerData.fail_pass(zoneData, targetPlayer,ball)
+                                else:
+                                    playerData.pass_to_target(targetPlayer)
+
+                            elif chosenFinalAction == 1 and playerData.get_player_with_ball().kickOff == False:
                                 print(f'Chosen Dribble is to {dribble_rate_keys_list[chosenDribble].index}')
-                                print('chose to dribble')
-                                playerData.does_action_succeed(f_dribble_rate)
-                            elif chosenFinalAction == 2:
+                                futureZoneIndex = dribble_rate_keys_list[chosenDribble].index
+                                # print('chose to dribble')
+                                doesDribbleSucceed = playerData.does_action_succeed(f_dribble_rate)
+
+                                if doesDribbleSucceed == True:
+                                    zone = zoneData.zoneInfo[playerWithBall.Index - 1]
+                                    futureZone = zoneData.zoneInfo[futureZoneIndex - 1]
+
+                                    for i in zone.Locations:
+                                        if zone.Locations[i][1] == playerWithBall:
+                                            zone.Locations[i].remove(playerWithBall)
+                                            zone.Locations[i].append(None)
+                                            zone.attached_players[playerWithBall.Team].remove(playerWithBall)
+
+
+
+
+                                    player_rect_from_dict = playerData.playerRects[playerWithBall]
+                                    print(f'PlayerWtihBallIndex before Del: {playerWithBall.Index}')
+                                    del playerData.playerRects[playerWithBall]
+                                    playerWithBall.Index = futureZoneIndex
+                                    playerData.playerRects[playerWithBall] = player_rect_from_dict
+                                    playerWithBall.placedOnLocation = False
+
+                                    futureZone.attached_players[playerWithBall.Team].append(playerWithBall)
+                                    print('Index should be updated!')
+                                    print(f'PlayerWithBallIndex: {playerWithBall.Index}')
+
+                                    # for i in playerData.playerRects:
+                                    #     if i == playerWithBall:
+                                    #         player_rect_from_dict = playerData.playerRects[playerWithBall]
+                                    #         del playerData.playerRects[playerWithBall]
+                                    #         playerWithBall.Index = futureZone
+                                    #         playerData.playerRects[playerWithBall] = player_rect_from_dict
+
+                                    # playerData.playerRects[playerWithBall.Index - 1]
+                                    # playerWithBall.move(futureZone)
+                            elif chosenFinalAction == 2 and playerData.get_player_with_ball().kickOff == False:
                                 print('chose to shoot! yolo')
                                 playerData.does_action_succeed(shotRate)
+                            elif playerData.get_player_with_ball().kickOff == True:
+                                print(f'KICK OFF HERE AT ETHIAD STADIUM')
+                                print(f'Chosen pass is to {pass_rate_keys_list[chosenPass]}: '
+                                      f'{playerPassRates[pass_rate_keys_list[chosenPass]]}')
+                                doesPassSucceed = playerData.does_action_succeed(f_pass_rate)
+                                playerData.get_player_with_ball().kickOff = False
+                                findTargetPlayer = pass_rate_keys_list[chosenPass]
+                                targetPlayer = None
+                                for i in playerData.playerRects:
+                                    if i.fullName == findTargetPlayer:
+                                        print(f'Found player! {i.fullName}')
+                                        targetPlayer = i
+                                print(f'Target Player: {findTargetPlayer}')
+
+                                if doesPassSucceed != True:
+                                    playerData.fail_pass(zoneData,targetPlayer,ball)
+                                else:
+                                    playerData.pass_to_target(targetPlayer)
+
                             print(f'Final Probs: {f_pass_rate,f_dribble_rate,shotRate}')
+
+
+
+
 
                             """Then we need to see whether the chosen action is actually successful"""
                             
@@ -135,14 +208,14 @@ class Game:
             ball = Ball()
             while self.running:
                 
-                self.check_events(zoneData,playerData)
+                self.check_events(zoneData,playerData,ball)
 
                 # RENDER YOUR GAME HERE
                 self.win.blit(soccer_field,(0,0))
                 if self.debug:
                     zoneData.draw_zones(self.win)
                 playerData.draw_players(self.win,zoneData)
-                ball.draw_ball(self.win,playerData)
+                ball.draw_ball(self.win,playerData,zoneData)
                 pygame.display.flip() #Update Display
 
                 self.clock.tick(60)  # limits FPS to 60
