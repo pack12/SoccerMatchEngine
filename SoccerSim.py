@@ -15,17 +15,17 @@ def main():
      Player("Marcus","Rashford", False,5,"Manchester United"),
      Player("Rasmus", "Hojlund",False,28,"Manchester United",kickOff=False,passing=10),
 
-    Player("Ederson","Morares",False,68,"Manchester City")
-        ,Player("Nathan", "Ake", False,65,"Manchester City"),
-     Player("Josko", "Gvardiol",False,32,"Manchester City"), # Originally 32
-     Player("Rueben", "Dias", False, 43, "Manchester City"), # Originally 43
-     Player("Kyle", "Walker", False,10, "Manchester City"),
-     Player("Rodri", "", False, 42, "Manchester City"),
-     Player("Kevin", "De Bruyne", False,30,"Manchester City"),
-     Player("Julien", "Alvarez", False, 52, "Manchester City"),
-     Player("Phil", "Foden", False, 63, "Manchester City"),
-     Player("Bernardo", "Silva", False,8, "Manchester City"),
-    Player("Erling", "Haaland", True,28,"Manchester City",kickOff=True)]
+    Player("Ederson","Morares",False,68,"Manchester City",speed=12)
+        ,Player("Nathan", "Ake", False,65,"Manchester City",speed=13,workRate=5),
+     Player("Josko", "Gvardiol",False,32,"Manchester City",speed=13), # Originally 32
+     Player("Rueben", "Dias", False, 43, "Manchester City",speed=12), # Originally 43
+     Player("Kyle", "Walker", False,10, "Manchester City",speed=20,workRate=4),
+     Player("Rodri", "", False, 42, "Manchester City",speed=13),
+     Player("Kevin", "De Bruyne", False,30,"Manchester City",speed=13),
+     Player("Julien", "Alvarez", False, 52, "Manchester City",speed=18),
+     Player("Phil", "Foden", False, 63, "Manchester City,",speed=18),
+     Player("Bernardo", "Silva", False,8, "Manchester City",speed=14),
+    Player("Erling", "Haaland", True,28,"Manchester City",kickOff=True, speed=17)]
 
 
     playerData = PlayerData(game_players)

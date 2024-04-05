@@ -15,10 +15,12 @@ class Player:
         self.decision = kwargs.get('decision',10)
         self.finishing = kwargs.get('finishing',10)
         self.dribble = kwargs.get('dribbling',10)
+        self.speed = kwargs.get('speed',10)
+        self.workRate = kwargs.get('workRate',10)
         self.kickOff = kwargs.get('kickOff',False)
         self.position = kwargs.get('position',None)
-    def move(self, FutureZone):
-        self.currentZone = FutureZone
+    def move(self, FutureZoneIndex):
+        self.Index = FutureZoneIndex
     def __hash__(self):
         return hash((self.fname, self.lname,self.hasBall,self.Index,self.Team))
 
@@ -592,6 +594,46 @@ class PlayerData:
         distance = np.linalg.norm(targetZonePoint - playerWithBallPoint)
 
         # print("Distance between the points:", distance / 147)
+        return distance / 147
+
+    def findDistanceToBall(self,zoneData,player,ball):
+        """In order to find the distance to target player, I need to get the player with the ball and their
+                current zone And I need to get the targetPlayer and the zone they're on"""
+
+        playerWithBallZone = zoneData.zoneInfo[player.Index - 1]
+        playerX = None
+        playerY = None
+
+        ballZone = zoneData.zoneInfo[player.Index - 1]
+        ballX = ball.x
+        ballY = ball.y
+
+        # print(f'Target Player: {targetPlayer.fullName}')
+        # Get the playerWithBall x and y location
+        playerCounter = 0
+        for i in zoneData.zoneInfo:
+
+            # print(i.Locations)
+            for j in i.Locations:
+                # print(f'{i.index}: {i.Locations[j]}')
+
+                if i.Locations[j][1] != None:
+                    # print(f'{i.Locations[j][1].fullName}')
+                    playerCounter += 1
+
+                if i.Locations[j][1] == player:
+                    playerX = i.Locations[j][0][0]
+                    playerY = i.Locations[j][0][1]
+
+        # print(f'Player Counter: {playerCounter}')     #Had to write this print stmt in b/c player was being deleted!
+        # Define the coordinates of two points
+        playerPoint = np.array([playerX, playerY])
+        ballPoint = np.array([ballX, ballY])
+
+        # Calculate the distance between the two points
+        distance = np.linalg.norm(ballPoint - playerPoint)
+
+        # print("Distance between the points:", distance/147)
         return distance / 147
 
     def findPlayerPassRates(self,zoneData):
